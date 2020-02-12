@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Resource, Api
 
 app = Flask(__name__)
@@ -15,7 +15,8 @@ class Item(Resource):
 
 
     def post(self, name):
-        item = {'name': name, 'price': 12.00}
+        request_data = request.get_json(force=True)
+        item = {'name': name, 'price': request_data['price']}
         items.append(item)
         return item, 201
 

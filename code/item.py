@@ -25,6 +25,7 @@ class Item(Resource):
         return {'message': 'Item not found'}
 
 
+    # Moving code that we re-use out into a class method, this is used by both get & post
     @classmethod
     def find_by_name(cls, name):
         connection = sqlite3.connect('data.db')
@@ -40,9 +41,8 @@ class Item(Resource):
 
 
     def post(self, name):
-        # Using a lambda function to filter, here we are working 'error first'
-        # which will mean we only run the rest of the code if there are no
-        # errors. This helps us move faster, we are not loaidng things we don't need.
+        # 'error first' - we only run the rest of the code if there are no errors.
+        #  This helps us move faster, we are not loaidng things we don't need.
         if self.find_by_name(name):
             return {'message': "An item with name '{}' already exists".format(name)}, 400
 

@@ -19,6 +19,14 @@ class Item(Resource):
     # must be authenticated and have an auth key to do anything with it.
     @jwt_required()
     def get(self, name):
+        item = self.find_by_name(name)
+        if item:
+            return item
+        return {'message': 'Item not found'}
+
+
+    @classmethod
+    def find_by_name(cls, name):
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
@@ -29,7 +37,6 @@ class Item(Resource):
 
         if row:
             return {'item': {'name': row[0], 'price': row[1]}}
-        return {'message': 'Item not found'}
 
 
     def post(self, name):

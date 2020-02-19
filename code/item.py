@@ -19,8 +19,17 @@ class Item(Resource):
     # must be authenticated and have an auth key to do anything with it.
     @jwt_required()
     def get(self, name):
-        item = next(filter(lambda x: x['name'] == name, items), None)
-        return {'item': item}, 200 if item else 404
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM items WHERE name=?"
+        result = cursor.execute(query, (name,))
+        row = result.fetchone()
+        connection.close()
+
+        if row:
+            return {'item': {'name': row[0], 'price': row[1]}}
+        return {'message': 'Item not found'}
 
 
     def post(self, name):

@@ -19,13 +19,18 @@ username_mapping = {u.username: u for u in users}
 userid_mapping = {u.id: u for u in users}
 
 
-# We use these functions to identify users as part of the
-# authentication process
+# Identifying the user by comparing the username and
+# password they enter to the username mapping
+# Returing the user, fed to JWT to make the token
 def authenticate(username, password):
     user = username_mapping.get(username, None)
     if user and safe_str_cmp(user.password, password):
         return user
 
+
+# Used when requesting an end point where authentication needed
+# Payload comes from request, contains user id, search on the
+# id mapping with this. If match then we know user is authenticated
 def identity(payload):
     user_id = payload['identity']
     return userid_mapping.get(user_id, None)

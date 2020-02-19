@@ -6,6 +6,7 @@ from flask_jwt import JWT, jwt_required
 # Importing from security, which itself imports from
 # our user class file
 from security import authenticate, identity
+from user import UserRegister
 
 # Set up
 app = Flask(__name__)
@@ -82,6 +83,7 @@ class ItemList(Resource):
 # items has a different end point it has it's own class
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
+api.add_resource(UserRegister, '/register')
 
 
 # Initializing the app

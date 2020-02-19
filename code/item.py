@@ -51,7 +51,7 @@ class Item(Resource):
         item = {'name': name, 'price': request_data['price']}
 
         connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
+        curser = connection.cursor()
 
         query = "INSERT INTO items VALUES (?, ?)"
         curser.execute(query, (item['name'], item['price']))

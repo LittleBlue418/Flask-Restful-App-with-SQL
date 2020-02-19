@@ -125,4 +125,15 @@ class Item(Resource):
 # A seporate class with a seporate end point to get all of the items.
 class ItemList(Resource):
     def get(self):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM items"
+        result = cursor.execute(query)
+        items = []
+        for row in results:
+            items.append({'name': row[0], 'price': row[1]})
+
+        connection.close()
+
         return {'items': items}

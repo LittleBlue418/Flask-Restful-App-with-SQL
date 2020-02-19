@@ -43,13 +43,22 @@ class Item(Resource):
         # Using a lambda function to filter, here we are working 'error first'
         # which will mean we only run the rest of the code if there are no
         # errors. This helps us move faster, we are not loaidng things we don't need.
-        if next(filter(lambda x: x['name'] == name, items), None):
+        if self.find_by_name(name):
             return {'message': "An item with name '{}' already exists".format(name)}, 400
 
         request_data = Item.parser.parse_args()
 
         item = {'name': name, 'price': request_data['price']}
-        items.append(item)
+
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "INSERT INTO items VALUES (?, ?)"
+        curser.execute(query, (item['name'], item['price']))
+
+        connection.commit()
+        connection.close()
+
         return item, 201
 
 

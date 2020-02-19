@@ -90,13 +90,36 @@ class Item(Resource):
     def put(self, name):
         request_data = Item.parser.parse_args()
 
-        item = next(filter(lambda x: x['name'] == name, items), None)
+        item = self.find_by_name(name)
+        updated_item = {'name': name, 'price': request_data['price']}
+
+        # Using try / except will give our users nice friendly error messages
         if item is None:
-            item = {'name': name, 'price': request_data['price']}
-            items.append(item)
+            try:
+                self.insert(updated_item)
+            except:
+                return {"message": "An error occured inserting the item"}, 500 # always use the correct code!
         else:
-            item.update(request_data)
-        return item
+            try:
+                self.update(updated_item)
+            except:
+                return {"message": "An error occured updating the item"}, 500
+        return updated_item
+
+
+    @classmethod
+    def update(cls, item):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        # Without the WHERE name=? it would update ALL prices!
+        query = "UPDATE items SET price=? WHERE name=?"
+        # Arguments in the tuple must be in the correct order
+        # Whichever question mark is first, that argument first etc
+        cursor.execute(query, (item['price'], item['name']))
+
+        connection.commit()
+        connection.close()
 
 
 # A seporate class with a seporate end point to get all of the items.

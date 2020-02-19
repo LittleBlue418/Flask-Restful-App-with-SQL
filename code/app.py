@@ -26,5 +26,7 @@ api.add_resource(ItemList, '/items')
 api.add_resource(UserRegister, '/register')
 
 
+# If this code is running in the main file (not via imported)
 # Initializing the app
-app.run(port=5000, debug=True)
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)

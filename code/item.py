@@ -50,16 +50,27 @@ class Item(Resource):
 
         item = {'name': name, 'price': request_data['price']}
 
+        # To capture if there has been an error posting for whatever reason
+        try:
+            self.insert(item)
+        except:
+            return {"message": "An error occurred"}, 500
+
+        return item, 201
+
+
+    # refactoring code shared by POST and PUT
+    @classmethod
+    def insert(cls, item):
         connection = sqlite3.connect('data.db')
-        curser = connection.cursor()
+        cursor = connection.cursor()
 
         query = "INSERT INTO items VALUES (?, ?)"
-        curser.execute(query, (item['name'], item['price']))
+        cursor.execute(query, (item['name'], item['price']))
 
         connection.commit()
         connection.close()
 
-        return item, 201
 
 
     def delete(self, name):
